@@ -3,6 +3,7 @@
 #include <vector>
 #include <thread>
 #include <chrono>
+#include <string.h>
 #include <math.h>
 #include "view.h"
 #include "draw.h"
@@ -13,19 +14,36 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    if (argc < 4 || 6 < argc)
+    if (argc < 2 || 6 < argc)
     {
-        cout << "Usage: " << argv[0] << " spaceSize cubeSize fps [XPIDivisor] [ZPIDivisor]\n";
+        cout << "Usage: " << argv[0] << " spaceSize [cubeSize] [fps] [XPIDivisor] [ZPIDivisor]\n";
         exit(EXIT_FAILURE);
     }
 
-    const int spaceSize = atoi(argv[1]);
-    const int cubeSize = atoi(argv[2]);
-    const int fps = atoi(argv[3]);
-    const double XPIDivisor = argc >= 5 ? (double)atoi(argv[4]) : 24.;
-    const double ZPIDivisor = argc == 5 ? (double)atoi(argv[4]) : (argc == 6 ? (double)atoi(argv[5]) : 24.);
+    if (strcmp(argv[1], "help") == 0)
+    {
+        cout << "Usage: " << argv[0] << " spaceSize [cubeSize] [fps] [XPIDivisor] [ZPIDivisor]\n";
+        exit(EXIT_SUCCESS);
+    }
 
-    if (spaceSize < cubeSize)
+    const int spaceSize = atoi(argv[1]);
+    int cubeSize = 3 <= argc ? atoi(argv[2]) : -100;
+    const int fps = 4 <= argc ? atoi(argv[3]) : 30;
+    const double XPIDivisor = 5 <= argc ? (double)atoi(argv[4]) : 2.25 * (double)fps;
+    const double ZPIDivisor = 6 == argc ? (double)atoi(argv[5]) : XPIDivisor;
+
+    if (spaceSize < 4)
+    {
+        cout << "Value of space size must be at least 4.";
+        exit(EXIT_FAILURE);
+    }
+
+    if (cubeSize != -100 && cubeSize < 0)
+    {
+        cubeSize = 0;
+    }
+
+    if (cubeSize != -100 && spaceSize < cubeSize)
     {
         cout << "Space size must be greater than cube size.\n";
         exit(EXIT_FAILURE);
@@ -37,8 +55,39 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
+    if (cubeSize != -100 && cubeSize <= 0)
     {
-        const double center[] = {(double)spaceSize / 2., (double)spaceSize / 2., (double)spaceSize / 2.};
+        cout << "Cube size must be strictly positive." << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    const double center[] = {(double)spaceSize / 2., (double)spaceSize / 2., (double)spaceSize / 2.};
+
+    if (cubeSize == -100)
+    {
+        cubeSize = 0;
+        double maxPoint[] = {center[0] + (double)cubeSize / 2,
+                             center[1] + (double)cubeSize / 2,
+                             center[2] + (double)cubeSize / 2};
+        double dPoints = sqrt(pow(distance(center[0], maxPoint[0]), 2) +
+                              pow(distance(center[1], maxPoint[1]), 2) +
+                              pow(distance(center[2], maxPoint[2]), 2));
+
+        while (dPoints < (double)spaceSize / 2)
+        {
+            cubeSize += 2;
+            maxPoint[0] = center[0] + (double)cubeSize / 2;
+            maxPoint[1] = center[1] + (double)cubeSize / 2;
+            maxPoint[2] = center[2] + (double)cubeSize / 2;
+            dPoints = sqrt(pow(distance(center[0], maxPoint[0]), 2) +
+                           pow(distance(center[1], maxPoint[1]), 2) +
+                           pow(distance(center[2], maxPoint[2]), 2));
+        }
+
+        cubeSize -= 2;
+    }
+    else
+    {
         const double maxPoint[] = {center[0] + (double)cubeSize / 2,
                                    center[1] + (double)cubeSize / 2,
                                    center[2] + (double)cubeSize / 2};
