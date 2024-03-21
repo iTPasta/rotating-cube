@@ -25,7 +25,7 @@ char *get_view(map<char, vector<vector<double>>> space, int spaceSize)
         if (key == ' ')
             break;
 
-        for (int i = 0; i < val.size(); i++)
+        for (int i = 0; i < (int)val.size(); i++)
         {
             if (val.at(i).at(2) <= minCharForEachViewPoint[(int)val.at(i).at(0)][(int)val.at(i).at(1)][1])
             {

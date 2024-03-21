@@ -29,7 +29,7 @@ void circularMoveXY(map<char, vector<vector<double>>> *pSpace, int spaceSize, in
                                  (double)spaceSize / 2,
                                  (double)spaceSize / 2};
         vector<vector<double>> newVal;
-        for (int i = 0; i < val.size(); i++)
+        for (int i = 0; i < (int)val.size(); i++)
         {
             vector<double> newPoint;
 
@@ -94,7 +94,7 @@ void circularMoveXYZ(map<char, vector<vector<double>>> *pSpace, int spaceSize, i
                                  (double)spaceSize / 2,
                                  (double)spaceSize / 2};
         vector<vector<double>> newVal;
-        for (int i = 0; i < val.size(); i++)
+        for (int i = 0; i < (int)val.size(); i++)
         {
             vector<double> newPoint;
 
